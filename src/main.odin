@@ -65,7 +65,12 @@ main :: proc() {
 
 		defer os.close(config_file)
 		os.write_string(config_file, strings.clone_from_bytes(config_text))
+
 		fmt.printfln("Initialized project '%s' at %s", name, wd)
+		os.chdir(wd)
+		fmt.println("\nNext steps:")
+		fmt.println("\tobt build\t- Build the project")
+		fmt.println("\tobt run\t  - Runs the project")
 	} else {
 		config_path := util.concat(cwd, "/obt.json")
 		cfg := config.load(config_path, opt.verbose)
