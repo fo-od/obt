@@ -12,7 +12,7 @@ main :: proc() {
 	Options :: struct {
 		action: string `args:"pos=0,required" usage:"What action to perform. (init, build, run, etc.)"`,
 
-		use_ols: bool `usage:"Use ols.json for getting collections."`,
+		use_ols: bool `usage:"Get collections from the odin language server config (ols.json)."`,
 
 		verbose: bool `usage:"Show more logs."`,
 	}
