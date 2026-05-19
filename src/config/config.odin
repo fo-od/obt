@@ -44,7 +44,7 @@ default :: proc() -> (cfg: Config) {
 			out = ".build",
 			flags = {},
 		},
-		use_ols_config = true,
+		use_ols_config = false,
 	}
 
 	cfg.actions = make(map[string]string, 3, context.allocator)

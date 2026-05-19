@@ -78,14 +78,6 @@
           "type": "string",
           "description": "Output directory",
           "default": ".build"
-        },
-        "flags": {
-          "type": "array",
-          "description": "Additional Odin compiler flags",
-          "items": {
-            "type": "string"
-          },
-          "examples": [["-debug"], ["-o:speed", "-no-bounds-check"]]
         }
       }
     },
