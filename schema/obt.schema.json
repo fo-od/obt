@@ -23,21 +23,45 @@
         "author": {
           "type": "string",
           "description": "The author of the project"
+        },
+        "collections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" }
+            },
+            "required": ["name", "path"],
+            "additionalProperties": false
+          }
         }
       },
       "required": ["name", "version"]
     },
 
-    "collections": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "path": { "type": "string" }
+    "actions": {
+      "type": "object",
+      "description": "Custom actions. Available variables: ${name}, ${version}, ${src}, ${out}, ${flags}",
+      "properties": {
+        "build": {
+          "type": "string",
+          "description": "Build the project",
+          "default": "odin build src -out:${out}/${name} ${flags}"
         },
-        "required": ["name", "path"],
-        "additionalProperties": false
+        "run": {
+          "type": "string",
+          "description": "Run the project",
+          "default": "odin run src"
+        },
+        "check": {
+          "type": "string",
+          "description": "Check for errors",
+          "default": "odin check src"
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
       }
     },
 
@@ -72,5 +96,5 @@
       "default": true
     }
   },
-  "required": []
+  "required": ["project"]
 }
