@@ -1,30 +1,12 @@
 package main
 
+import "core:fmt"
 import "core:strings"
 import "core:flags"
 import "core:os"
-import "core:fmt"
 import "core:encoding/json"
 import "config"
 import "util"
-
-load_config :: proc(path: string) -> (cfg: config.Config, err: union{os.Error, json.Unmarshal_Error}) {
-    data: []byte
-
-	data, err = os.read_entire_file(path, context.allocator)
-	if err != nil {
-		fmt.eprintln("Failed to read config:", err)
-		return
-	}
-
-	err = json.unmarshal(data, &cfg)
-	if err != nil {
-		fmt.eprintln("Failed to parse config:", err)
-		return
-	}
-
-	return
-}
 
 main :: proc() {
 	Options :: struct {
@@ -42,8 +24,7 @@ main :: proc() {
 	cwd, _ := os.get_working_directory(context.allocator)
 	ed, _ := os.get_executable_directory(context.allocator)
 
-	switch opt.action {
-	case "init":
+	if opt.action == "init" {
 		name := util.get_input("Name of project: ")
 		author := util.get_input("Author of project: ")
 
@@ -62,9 +43,19 @@ main :: proc() {
 			"}"
 		})
 
-		fmt.println(util.concat(ed, "/src/resources/obt.json"))
+		gitignore, _ := os.create(util.concat(wd, "/.gitignore"))
 
-		cfg := config.TEMPLATE
+		util.fprint(gitignore, {
+		    "# Build output",
+            ".build/",
+            "",
+            "# OS files",
+            ".DS_Store",
+            "Thumbs.db",
+            ""
+		})
+
+		cfg := config.default()
 		cfg.project.name = name
 		cfg.project.author = author
 
@@ -74,12 +65,22 @@ main :: proc() {
 
 		defer os.close(config_file)
 		os.write_string(config_file, strings.clone_from_bytes(config_text))
-
-	case "build", "run":
+		fmt.printfln("Initialized project '%s' at %s", name, wd)
+	} else {
 		config_path := util.concat(cwd, "/obt.json")
-		if !os.exists(config_path) {
-			fmt.println("Couldn't open obt.json from cwd, using template.")
-			config_path = util.concat(ed, "/src/resources/obt.json")
+		cfg := config.load(config_path, opt.verbose)
+
+		cmd := cfg.actions[opt.action]
+
+		if cmd == "" {
+		    fmt.eprintfln("Unknown action '%s'", opt.action)
+		    os.exit(1)
 		}
+
+		cmd_expanded := config.expand_placeholders(cfg, cmd)
+		if opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
+
+		fmt.println(cmd_expanded)
+		util.exec(cmd_expanded)
 	}
 }

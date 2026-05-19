@@ -42,22 +42,22 @@
 
     "actions": {
       "type": "object",
-      "description": "Custom actions. Available variables: ${name}, ${version}, ${src}, ${out}, ${flags}",
+      "description": "Custom actions. Available variables: ${name}, ${version}, ${src}, ${out}",
       "properties": {
         "build": {
           "type": "string",
           "description": "Build the project",
-          "default": "odin build src -out:${out}/${name} ${flags}"
+          "default": "odin build ${src} -out:${out}/${name}"
         },
         "run": {
           "type": "string",
           "description": "Run the project",
-          "default": "odin run src"
+          "default": "odin run ${src}"
         },
         "check": {
           "type": "string",
           "description": "Check for errors",
-          "default": "odin check src"
+          "default": "odin check ${src}"
         }
       },
       "additionalProperties": {
@@ -93,7 +93,7 @@
     "useOlsConfig": {
       "type": "boolean",
       "description": "Use ols.json for collections.",
-      "default": true
+      "default": false
     }
   },
   "required": ["project"]
