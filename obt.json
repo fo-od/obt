@@ -1,11 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/fo-od/obt/refs/heads/main/schema/obt.schema.json",
-  "project": {
-    "name": "obt",
-    "version": "1.0.0",
-    "description": "odin build tool",
-    "author": "food"
-  },
+  "name": "obt",
   "actions": {
     "run": "odin run ${src} -out:${out}/${name}",
     "check": "odin check ${src}",
