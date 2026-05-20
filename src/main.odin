@@ -160,7 +160,7 @@ main :: proc() {
 		    os.exit(1)
 		}
 
-		cmd_expanded := config.expand_placeholders(cfg, cmd, {})
+		cmd_expanded := config.expand_placeholders(cfg, cmd, opt.overflow[:]) if opt.overflow_flags else config.expand_placeholders(cfg, cmd, {})
 		if opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
 
 		if opt.verbose do fmt.printfln("Running '%s'", cmd_expanded)
