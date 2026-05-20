@@ -10,38 +10,34 @@ Collection :: struct {
 	path: string `json:"path"`,
 }
 
-Project :: struct {
-	name: string `json:"name"`,
-	collections: []Collection `json:"collections"`,
-}
-
 Build_Config :: struct {
 	src: string `json:"src"`,
 	out: string `json:"out"`,
 	flags: []string `json:"flags"`,
+	collections: []Collection `json:"collections"`,
+	use_ols_collections: bool `json:"useOlsCollections"`,
+	treat_overflow_as_flags: bool `json:"treatOverflowAsFlags"`,
 }
 
 Config :: struct {
     schema: string `json:"$schema"`,
-	project: Project `json:"project"`,
+    name: string `json:"name"`,
 	actions: map[string]string `json:"actions"`,
 	build: Build_Config `json:"build"`,
-	use_ols_collections: bool `json:"useOlsCollections"`,
 }
 
 default :: proc() -> (cfg: Config) {
 	cfg = {
 		schema = "https://raw.githubusercontent.com/fo-od/obt/refs/heads/main/schema/obt.schema.json",
-		project = {
-			name = "myproject",
-			collections = {},
-		},
+		name = "myproject",
 		build = {
 			src = "src",
 			out = ".build",
 			flags = {},
+			collections = {},
+			use_ols_collections = false,
+			treat_overflow_as_flags = false,
 		},
-		use_ols_collections = false,
 	}
 
 	cfg.actions = make(map[string]string, 3, context.allocator)
@@ -72,17 +68,17 @@ load :: proc(path: string, verbose: bool) -> (cfg: Config) {
 
 
 /*
- Expand all config placeholders in a string
+Expand all config placeholders in a string
 
- Placeholders:
-  - ${name}: Project name
-  - ${src}: Source directory
-  - ${out}: Output/build directory
-  - ${flags}: Build flags (includes collections)
+Placeholders:
+ - ${name}: Project name
+ - ${src}: Source directory
+ - ${out}: Output/build directory
+ - ${flags}: Build flags (includes collections)
 */
 expand_placeholders :: proc(config: Config, i: string, overflow: []string) -> (o: string) {
     o = i
-    o, _ = strings.replace_all(o, "${name}", config.project.name)
+    o, _ = strings.replace_all(o, "${name}", config.name)
     o, _ = strings.replace_all(o, "${src}", config.build.src)
     o, _ = strings.replace_all(o, "${out}", config.build.out)
 
@@ -91,7 +87,7 @@ expand_placeholders :: proc(config: Config, i: string, overflow: []string) -> (o
 
         strings.write_string(&flags, strings.join(config.build.flags, " "))
 
-        for collection in config.project.collections {
+        for collection in config.build.collections {
             strings.write_string(&flags, fmt.tprintf("-collection:%s=%s", collection.name, collection.path))
         }
 
