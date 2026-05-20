@@ -160,6 +160,10 @@ main :: proc() {
 		    os.exit(1)
 		}
 
+		if opt.use_ols {
+		    // TODO: read ols collections and add to config
+		}
+
 		cmd_expanded := config.expand_placeholders(cfg, cmd, opt.overflow[:]) if opt.overflow_flags else config.expand_placeholders(cfg, cmd, {})
 		if opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
 
