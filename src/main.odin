@@ -4,6 +4,7 @@ import "core:fmt"
 import "core:strings"
 import "core:flags"
 import "core:os"
+import "core:path/filepath"
 import "core:encoding/json"
 import "config"
 import "util"
@@ -14,19 +15,44 @@ main :: proc() {
 
 		use_ols: bool `usage:"Get collections from the odin language server config (ols.json)."`,
 
+		overflow_flags: bool `usage:"Treat extra arguments as build flags."`,
+
 		verbose: bool `usage:"Show more logs."`,
+
+		overflow: [dynamic]string `usage:"Extra arguments go here."`,
 	}
 
 	opt: Options
 
-	flags.parse_or_exit(&opt, os.args)
+	parse_err := flags.parse(&opt, os.args[1:])
+
+    if parse_err != nil {
+        _, ok := parse_err.(flags.Help_Request);
+        if ok || len(os.args) == 1 {
+            fmt.println("obt - Odin build tool")
+            fmt.println("")
+            fmt.println("Usage:")
+            fmt.println("\tobt action [-overflow-flags] [-use-ols] [-verbose] ...")
+            fmt.println("Flags:")
+            fmt.println("\t-action:<string>, required  | What action to perform. (init, build, run, etc.)")
+            fmt.println("\tActions:                    |")
+            fmt.println("\t\tinit name (builtin) | Initializes an Odin project with name")
+            fmt.println("\t\t...                 | You can also run custom actions defined in obt.json!")
+            fmt.println("\t                            |")
+            fmt.println("\t-overflow-flags             | Treat extra arguments as build flags.")
+            fmt.println("\t-use-ols                    | Get collections from the odin language server config (ols.json).")
+            fmt.println("\t-verbose                    | Show more logs.")
+        }
+
+        util.print_errors(Options, parse_err, filepath.base(os.args[0]), show_help = false)
+        os.exit(0 if ok else 1)
+    }
 
 	cwd, _ := os.get_working_directory(context.allocator)
 	ed, _ := os.get_executable_directory(context.allocator)
 
 	if opt.action == "init" {
-		name := util.get_input("Name of project: ")
-		author := util.get_input("Author of project: ")
+		name := os.args[2]
 
 		wd := util.concat(cwd, "/", name)
 
@@ -57,7 +83,6 @@ main :: proc() {
 
 		cfg := config.default()
 		cfg.project.name = name
-		cfg.project.author = author
 
 		config_text, _ := json.marshal(cfg, json.Marshal_Options{pretty = true})
 
@@ -71,7 +96,8 @@ main :: proc() {
 		fmt.println("\nNext steps:")
 		fmt.println("\tobt build\t- Build the project")
 		fmt.println("\tobt run\t  - Runs the project")
-	} else {
+	}
+	else {
 		config_path := util.concat(cwd, "/obt.json")
 		cfg := config.load(config_path, opt.verbose)
 
@@ -82,7 +108,7 @@ main :: proc() {
 		    os.exit(1)
 		}
 
-		cmd_expanded := config.expand_placeholders(cfg, cmd)
+		cmd_expanded := config.expand_placeholders(cfg, cmd, {})
 		if opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
 
 		fmt.println(cmd_expanded)
