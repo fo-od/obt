@@ -92,7 +92,7 @@ main :: proc() {
         os.exit(0 if ok else 1)
     }
 
-    fmt.println(opt.overflow[:])
+    if opt.verbose do fmt.printfln("Overflow: %v", opt.overflow)
 
     /******************
      * Action parsing *
