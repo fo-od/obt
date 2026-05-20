@@ -11,22 +11,22 @@
 
     "actions": {
       "type": "object",
-      "description": "Custom actions. Available variables: ${name}, ${src}, ${out}, ${flags}",
+      "description": "Custom actions.\nAvailable variables: ${name}, ${src}, ${out}, ${flags}, ${n} where n is index n of overflow\nDoing '${n}|${variable}' will prioritize '${n}', and fall back to '${variable}'.",
       "properties": {
         "build": {
           "type": "string",
           "description": "Build the project",
-          "default": "odin build ${src} -out:${out}/${name} ${flags}"
+          "default": "odin build ${0}|${src} -out:${out}/${name} ${flags}"
         },
         "run": {
           "type": "string",
           "description": "Run the project",
-          "default": "odin run ${src} ${flags}"
+          "default": "odin run ${0}|${src} ${flags}"
         },
         "check": {
           "type": "string",
           "description": "Check for errors",
-          "default": "odin check ${src}"
+          "default": "odin check ${0}|${src}"
         }
       },
       "additionalProperties": {
