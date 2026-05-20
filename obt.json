@@ -2,9 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/fo-od/obt/refs/heads/main/schema/obt.schema.json",
   "name": "obt",
   "actions": {
-    "run": "odin run ${src} -out:${out}/${name}",
+    "run": "odin run ${src} ${flags}",
     "check": "odin check ${src}",
-    "build": "odin build ${src} -out:${out}/${name}"
+    "build": "odin build ${src} -out:${out}/${name} ${flags}"
   },
   "build": {
     "src": "src",
