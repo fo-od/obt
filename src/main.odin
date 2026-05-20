@@ -82,7 +82,7 @@ main :: proc() {
 		})
 
 		cfg := config.default()
-		cfg.project.name = name
+		cfg.name = name
 
 		config_text, _ := json.marshal(cfg, json.Marshal_Options{pretty = true})
 
@@ -111,7 +111,7 @@ main :: proc() {
 		cmd_expanded := config.expand_placeholders(cfg, cmd, {})
 		if opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
 
-		fmt.println(cmd_expanded)
+		if opt.verbose do fmt.println(cmd_expanded)
 		util.exec(cmd_expanded)
 	}
 }
