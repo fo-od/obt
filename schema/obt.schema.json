@@ -2,17 +2,11 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "project": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the project",
-          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
-          "default": "myproject"
-        }
-      },
-      "required": ["name"]
+    "name": {
+      "type": "string",
+      "description": "The name of the project",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+      "default": "myproject"
     },
 
     "actions": {
@@ -87,5 +81,5 @@
       }
     }
   },
-  "required": ["project"]
+  "required": ["name"]
 }
