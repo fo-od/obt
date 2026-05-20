@@ -16,7 +16,7 @@
         "build": {
           "type": "string",
           "description": "Build the project",
-          "default": "odin build ${0}|${src} -out:${out}/${name} ${flags}"
+          "default": "odin build ${0}|${src} -out:${0}[0, '/']/${out}/${name}||${out}/${name} ${flags}"
         },
         "run": {
           "type": "string",
