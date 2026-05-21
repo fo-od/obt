@@ -6,7 +6,25 @@
       "command": "odin build ${dir} -out:${out}/${name} ${flags}",
       "args": {
         "dir": {
-          "value": "${'/' in 0 ? 0 : 0/${src}}",
+          "value": "$('/' in $0 ? $0 : $0/$src)",
+          "default": "${src}"
+        }
+      }
+    },
+    "run": {
+      "command": "odin run ${dir} ${flags}",
+      "args": {
+        "dir": {
+          "value": "$('/' in $0 ? $0 : $0/$src)",
+          "default": "${src}"
+        }
+      }
+    },
+    "check": {
+      "command": "odin check ${dir}",
+      "args": {
+        "dir": {
+          "value": "$('/' in $0 ? $0 : $0/$src)",
           "default": "${src}"
         }
       }
