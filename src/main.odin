@@ -53,7 +53,13 @@ main :: proc() {
 
 		util.fprint(
 			gitignore,
-			{"# Build output", ".build/", "", "# OS files", ".DS_Store", "Thumbs.db", ""},
+			{"# Build output",
+			".build/",
+			"",
+			"# OS files",
+			".DS_Store",
+			"Thumbs.db",
+			""},
 		)
 
 		cfg := config.default_config()
