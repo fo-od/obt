@@ -11,11 +11,11 @@
 
     "actions": {
       "type": "object",
-      "description": "Custom actions. Each action is an object with a required 'command' string and an optional 'description'. Templates support placeholders like ${name}, ${src}, ${out}, ${flags}, ${overflow}, and ${n}.",
+      "description": "Custom actions. Available placeholders: ${name}, ${src}, ${out}, ${flags}, and ${n}. look at the docs for more info.",
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "command": { "type": "string", "description": "Command template to execute" },
+          "command": { "type": "string", "description": "Command to execute" },
           "description": { "type": "string", "description": "Description of the action" }
         },
         "required": ["command"],
