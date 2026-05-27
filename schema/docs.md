@@ -39,7 +39,7 @@ The structure of an action looks like this:
   ...
   "actions": {
     "myaction": { // name of action
-      "description": "Displays text", // description of the action (not required)
+      "description": "Displays text", // description of the action (optional)
       "command": "echo ${0}", // command to run, look at variables section for defined variables
     }
   }
@@ -54,5 +54,6 @@ Available variables:
 - name: Name of the project defined by the config.
 - src: Source dircetory defined by the config.
 - out: Output/build directory defined by the config.
-- flags: Overflowed arguments.
+- flags: Build flags defined in `obt.json`.
+- overflow: Overflowed arguments, starts at the highest used `${n}`, exclusive.
 - n where n is an integer >= 0: Expands to `overflow[n]`, or empty if `overflow[n]` doesn't exist.

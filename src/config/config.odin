@@ -100,9 +100,10 @@ Placeholders:
  - ${src}: Source directory
  - ${out}: Output/build directory
  - ${flags}: Build flags (includes collections)
+ - ${overflow}: Rest of overflow arguments, starting at the highest used ${n} + 1
  - ${n}: Index n of overflow arguments
 */
-expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat_overflow_as_flags: bool, verbose: bool) -> string {
+expand_placeholders :: proc(config: Config, s: string, overflow: []string, verbose: bool) -> string {
     cmd := placeholder_split(s)
     sb := strings.builder_make()
 
@@ -115,13 +116,6 @@ expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat
         strings.write_string(&flags_sb, fmt.tprintf("-collection:%s=%s", collection.name, collection.path))
     }
 
-    if treat_overflow_as_flags {
-        for flag in overflow {
-            strings.write_string(&flags_sb, flag)
-        }
-        flags = strings.to_string(flags_sb)
-    }
-
     n: uint = 0
 
     for tok, i in cmd {
@@ -130,8 +124,6 @@ expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat
             index_str = strings.trim_prefix(index_str, "${")
             index_str = strings.trim_suffix(index_str, "}")
             index, ok := strconv.parse_uint(index_str)
-
-            ok = false if treat_overflow_as_flags else ok
 
             if ok {
                 if len(overflow) != 0 && index <= len(overflow)-1 {

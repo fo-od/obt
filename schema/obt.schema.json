@@ -11,7 +11,7 @@
 
     "actions": {
       "type": "object",
-      "description": "Custom actions. Available placeholders: ${name}, ${src}, ${out}, ${flags}, and ${n}. look at the docs for more info.",
+      "description": "Custom actions. Available placeholders: ${name}, ${src}, ${out}, ${flags}, ${overflow}, and ${n}. look at the docs for more info.",
       "additionalProperties": {
         "type": "object",
         "properties": {
