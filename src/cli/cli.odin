@@ -19,7 +19,6 @@ opt: Options
 
 print_help :: proc() {
 	fmt.println("obt - Odin build tool")
-	fmt.println("")
 	fmt.println("Usage:")
 	fmt.println("\tobt action [-overflow-flags] [-use-ols] [-verbose] ...")
 	fmt.println("Flags:")
@@ -27,9 +26,13 @@ print_help :: proc() {
 	fmt.println("\tActions:                    |")
 	fmt.println("\t    - init name (builtin)   | Initializes an Odin project with name.")
 	fmt.println("\t    - info (builtin)        | Displays the project's info.")
-	fmt.println("\t    - ...                   | You can also run custom actions defined in obt.json!")
+	fmt.println(
+		"\t    - ...                   | You can also run custom actions defined in obt.json!",
+	)
 	fmt.println("\t                            |")
-	fmt.println("\t-use-ols                    | Get collections from the odin language server config (ols.json).")
+	fmt.println(
+		"\t-use-ols                    | Get collections from the odin language server config (ols.json).",
+	)
 	fmt.println("\t-verbose                    | Show more logs.")
 	fmt.println("\t--                          | Puts the following arguments into overflow.")
 }
