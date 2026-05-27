@@ -12,8 +12,6 @@ Options :: struct {
 
 	use_ols: bool,
 
-	overflow_flags: bool,
-
 	verbose: bool,
 
 	default_cfg: bool,
@@ -31,21 +29,25 @@ print_help :: proc() {
     fmt.println("Flags:")
     fmt.println("\t-action:<string>, required  | What action to perform. (init, build, run, etc.)")
     fmt.println("\tActions:                    |")
-    fmt.println("\t\tinit name (builtin) | Initializes an Odin project with name")
-    fmt.println("\t\t...                 | You can also run custom actions defined in obt.json!")
+    fmt.println("\t    - init name (builtin)   | Initializes an Odin project with name.")
+    fmt.println("\t    - info (builtin)        | Displays the project's info.")
+    fmt.println("\t    - ...                   | You can also run custom actions defined in obt.json!")
     fmt.println("\t                            |")
-    fmt.println("\t-overflow-flags             | Treat extra arguments as build flags.")
     fmt.println("\t-use-ols                    | Get collections from the odin language server config (ols.json).")
     fmt.println("\t-verbose                    | Show more logs.")
+    fmt.println("\t--                          | Puts the following arguments into overflow.")
 }
 
 parse :: proc() {
     parse_err: flags.Error
 
 	for arg, i in os.args[1:] {
+	    // dont continue parsing if theres been an error
 	    if parse_err != nil do break
+
 	    rest := os.args[i+2:]
 
+		// show help message if no args given
 	    if len(os.args) == 1 {
 			parse_err = flags.Parse_Error{.Missing_Flag, "Missing action, look at 'obt -help' for more information."}
 			continue
@@ -77,7 +79,6 @@ parse :: proc() {
 		else {
 		    switch arg {
 			case "-use-ols": opt.use_ols = true
-			case "-overflow-flags": opt.overflow_flags = true
 			case "-verbose": opt.verbose = true
 			case:
 			    append(&opt.overflow, arg)

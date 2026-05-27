@@ -24,6 +24,7 @@ main :: proc() {
 		name := os.args[2]
 
 		wd: string
+		// handle target directory
 	    if strings.starts_with(name, "/") {
 			wd = name
 		}
@@ -73,6 +74,9 @@ main :: proc() {
 		fmt.println("Next steps:")
 		fmt.println("\tobt build  - Build the project")
 		fmt.println("\tobt run    - Runs the project")
+	}
+	if cli.opt.action == "info" {
+	    // TODO: show project info (name, actions, build flags...)
 	}
 	else {
 	    // parse custom action
