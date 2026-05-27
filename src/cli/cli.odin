@@ -24,7 +24,7 @@ print_help :: proc() {
 	fmt.println("Flags:")
 	fmt.println("\t-action:<string>, required  | What action to perform. (init, build, run, etc.)")
 	fmt.println("\tActions:                    |")
-	fmt.println("\t    - init name (builtin)   | Initializes an Odin project with name.")
+	fmt.println("\t    - init <name> (builtin) | Initializes an Odin project.")
 	fmt.println("\t    - info (builtin)        | Displays the project's info.")
 	fmt.println(
 		"\t    - ...                   | You can also run custom actions defined in obt.json!",
