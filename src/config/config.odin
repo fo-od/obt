@@ -41,12 +41,14 @@ default_config :: proc() -> (cfg: Config) {
 			out = ".build",
 			flags = {},
 			collections = {},
-			use_ols_collections = true,
+			use_ols_collections = false,
 		},
 	}
 
-	// example action
-	cfg.actions["run-debug"] = Action{command = "odin run ${src} ${flags} -debug", description = "Run with debug flags"}
+	// default actions (from obt.json)
+	cfg.actions["build"] = Action{command = "odin build ${src} -out:${out}/${name} ${flags}", description = "Build the project"}
+	cfg.actions["run"]   = Action{command = "odin run ${src} ${flags}", description = "Run the project"}
+	cfg.actions["check"] = Action{command = "odin check ${src}", description = "Check the project"}
 
 	return
 }
