@@ -16,13 +16,15 @@
         "type": "object",
         "properties": {
           "command": { "type": "string", "description": "Command to execute" },
-          "description": { "type": "string", "description": "Description of the action" }
+          "description": {
+            "type": "string",
+            "description": "Description of the action"
+          }
         },
         "required": ["command"],
         "additionalProperties": false
       }
     },
-
 
     "build": {
       "type": "object",

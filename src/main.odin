@@ -1,64 +1,60 @@
 package main
 
-import "core:fmt"
-import "core:strings"
-import "core:os"
-import "core:encoding/json"
-import "config"
-import "util"
 import "cli"
+import "config"
+import "core:encoding/json"
+import "core:fmt"
+import "core:os"
+import "core:strings"
+import "util"
 
 main :: proc() {
 	cli.parse()
 
-    if cli.opt.verbose do fmt.printfln("Overflow: %v", cli.opt.overflow)
+	if cli.opt.verbose do fmt.printfln("Overflow: %v", cli.opt.overflow)
 
-    /******************
+	/******************
      * Action parsing *
      ******************/
 
 	cwd, _ := os.get_working_directory(context.allocator)
 
 	if cli.opt.action == "init" {
-	    // initialize a project
+		// initialize a project
 		name := os.args[2]
 
 		wd: string
 		// handle target directory
-	    if strings.starts_with(name, "/") {
+		if strings.starts_with(name, "/") {
 			wd = name
-		}
-		else if strings.starts_with(name, "./") {
-		    wd = util.concat(cwd, "/", name[2:])
-		}
-		else {
-		    wd = util.concat(cwd, "/", name)
+		} else if strings.starts_with(name, "./") {
+			wd = util.concat(cwd, "/", name[2:])
+		} else {
+			wd = util.concat(cwd, "/", name)
 		}
 
 		os.mkdir_all(util.concat(wd, "/src"))
 		main_file, _ := os.create(util.concat(wd, "/src/main.odin"))
 
-		util.fprint(main_file, {
-			"package main",
-			"",
-			"import \"core:fmt\"",
-			"",
-			"main :: proc() {",
-			"	fmt.println(\"Hellope world!\")",
-			"}"
-		})
+		util.fprint(
+			main_file,
+			{
+				"package main",
+				"",
+				"import \"core:fmt\"",
+				"",
+				"main :: proc() {",
+				"	fmt.println(\"Hellope world!\")",
+				"}",
+			},
+		)
 
 		gitignore, _ := os.create(util.concat(wd, "/.gitignore"))
 
-		util.fprint(gitignore, {
-		    "# Build output",
-            ".build/",
-            "",
-            "# OS files",
-            ".DS_Store",
-            "Thumbs.db",
-            ""
-		})
+		util.fprint(
+			gitignore,
+			{"# Build output", ".build/", "", "# OS files", ".DS_Store", "Thumbs.db", ""},
+		)
 
 		cfg := config.default_config()
 		cfg.name = name
@@ -76,10 +72,9 @@ main :: proc() {
 		fmt.println("\tobt run    - Runs the project")
 	}
 	if cli.opt.action == "info" {
-	    // TODO: show project info (name, actions, build flags...)
-	}
-	else {
-	    // parse custom action
+		// TODO: show project info (name, actions, build flags...)
+	} else {
+		// parse custom action
 		config_path := util.concat(cwd, "/obt.json")
 		cfg, default := config.load(config_path, cli.opt.verbose)
 
@@ -88,18 +83,24 @@ main :: proc() {
 		action := cfg.actions[cli.opt.action]
 
 		if action.command == "" {
-		    fmt.eprintfln("Unknown action '%s'", cli.opt.action)
-		    os.exit(1)
+			fmt.eprintfln("Unknown action '%s'", cli.opt.action)
+			os.exit(1)
 		}
 
 		if cli.opt.use_ols {
-		    // TODO: read ols collections and add to config
+			// TODO: read ols collections and add to config
 		}
 
-		cmd_expanded := config.expand_placeholders(cfg, action.command, cli.opt.overflow[:], cli.opt.verbose)
+		cmd_expanded := config.expand_placeholders(
+			cfg,
+			action.command,
+			cli.opt.overflow[:],
+			cli.opt.verbose,
+		)
 		if cli.opt.verbose do fmt.printfln("Expanding '%s' to '%s'", action.command, cmd_expanded)
 
 		if cli.opt.verbose do fmt.printfln("Running '%s'", cmd_expanded)
 		util.exec(cmd_expanded)
 	}
 }
+
