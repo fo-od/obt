@@ -18,14 +18,18 @@ Build_Config :: struct {
 	flags: []string `json:"flags"`,
 	collections: []Collection `json:"collections"`,
 	use_ols_collections: bool `json:"useOlsCollections"`,
-	treat_overflow_as_flags: bool `json:"treatOverflowAsFlags"`,
+}
+
+Action :: struct {
+    command: string `json:"command"`,
+    description: string `json:"description"`,
 }
 
 Config :: struct {
     schema: string `json:"$schema"`,
     name: string `json:"name"`,
-	actions: map[string]string `json:"actions"`,
-	build: Build_Config `json:"build"`,
+    actions: map[string]Action `json:"actions"`,
+    build: Build_Config `json:"build"`,
 }
 
 default_config :: proc() -> (cfg: Config) {
@@ -37,15 +41,12 @@ default_config :: proc() -> (cfg: Config) {
 			out = ".build",
 			flags = {},
 			collections = {},
-			use_ols_collections = false,
-			treat_overflow_as_flags = false,
+			use_ols_collections = true,
 		},
 	}
 
-	cfg.actions = make(map[string]string, 3, context.allocator)
-	cfg.actions["build"] = "odin build ${0}|${src} -out:${out}/${name} ${flags}"
-	cfg.actions["run"]   = "odin run ${0}|${src} ${flags}"
-	cfg.actions["check"] = "odin check ${0}|${src}"
+	// example action
+	cfg.actions["run-debug"] = Action{command = "odin run ${src} ${flags} -debug", description = "Run with debug flags"}
 
 	return
 }
@@ -98,8 +99,6 @@ Placeholders:
  - ${out}: Output/build directory
  - ${flags}: Build flags (includes collections)
  - ${n}: Index n of overflow arguments
-
-Doing '${n}|${variable}' will prioritize '${n}', and fall back to '${variable}'.
 */
 expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat_overflow_as_flags: bool, verbose: bool) -> string {
     cmd := placeholder_split(s)
@@ -118,23 +117,13 @@ expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat
         for flag in overflow {
             strings.write_string(&flags_sb, flag)
         }
+        flags = strings.to_string(flags_sb)
     }
 
-    flags = strings.to_string(flags_sb)
+    n: uint = 0
 
-    skip: u8
     for tok, i in cmd {
-        if skip > 0 {
-            skip -= 1
-            continue
-        }
-
-        prev := cmd[i-1] if i != 0 else ""
-        next := cmd[i+1] if i != len(cmd)-1 else ""
-
-        is_var := strings.starts_with(tok, "${") && strings.ends_with(tok, "}")
-
-        if is_var {
+        if strings.starts_with(tok, "${") && strings.ends_with(tok, "}") {
             index_str := tok
             index_str = strings.trim_prefix(index_str, "${")
             index_str = strings.trim_suffix(index_str, "}")
@@ -145,18 +134,8 @@ expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat
             if ok {
                 if len(overflow) != 0 && index <= len(overflow)-1 {
                     strings.write_string(&sb, overflow[index])
-                    skip = 2
-                }
-                else if next == "|" {
-                    next_var := cmd[i+2] if i != len(cmd)-2 else ""
-
-                    if next_var != "" {
-                        skip = 1
-                        switch tok {
-                        case "${name}": strings.write_string(&sb, config.name)
-                        case "${src}": strings.write_string(&sb, config.build.src)
-                        case "${out}": strings.write_string(&sb, config.build.out)
-                        }
+                    if index > n || n == 0 {
+                        n = index+1
                     }
                 }
                 else {
@@ -169,6 +148,7 @@ expand_placeholders :: proc(config: Config, s: string, overflow: []string, treat
                 case "${src}": strings.write_string(&sb, config.build.src)
                 case "${out}": strings.write_string(&sb, config.build.out)
                 case "${flags}": strings.write_string(&sb, flags)
+                case "${overflow}": strings.write_string(&sb, strings.join(overflow[n:], " "))
                 }
             }
         }

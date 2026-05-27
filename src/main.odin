@@ -81,20 +81,20 @@ main :: proc() {
 
 		cli.opt.default_cfg = default
 
-		cmd := cfg.actions[cli.opt.action]
-
-		if cmd == "" {
+		action := cfg.actions[cli.opt.action]
+		
+		if action.command == "" {
 		    fmt.eprintfln("Unknown action '%s'", cli.opt.action)
 		    os.exit(1)
 		}
-
+		
 		if cli.opt.use_ols {
 		    // TODO: read ols collections and add to config
 		}
-
-		cmd_expanded := config.expand_placeholders(cfg, cmd, cli.opt.overflow[:], cli.opt.overflow_flags, cli.opt.verbose)
-		if cli.opt.verbose do fmt.printfln("Expanding '%s' to '%s'", cmd, cmd_expanded)
-
+	
+		cmd_expanded := config.expand_placeholders(cfg, action.command, cli.opt.overflow[:], cli.opt.overflow_flags, cli.opt.verbose)
+		if cli.opt.verbose do fmt.printfln("Expanding '%s' to '%s'", action.command, cmd_expanded)
+		
 		if cli.opt.verbose do fmt.printfln("Running '%s'", cmd_expanded)
 		util.exec(cmd_expanded)
 	}

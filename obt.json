@@ -3,31 +3,16 @@
   "name": "obt",
   "actions": {
     "build": {
-      "command": "odin build ${dir} -out:${out}/${name} ${flags}",
-      "args": {
-        "dir": {
-          "value": "$('/' in $0 ? $0 : $0/$src)",
-          "default": "${src}"
-        }
-      }
+      "description": "Build the project",
+      "command": "odin build ${src} -out:${out}/${name} ${flags}"
     },
     "run": {
-      "command": "odin run ${dir} ${flags}",
-      "args": {
-        "dir": {
-          "value": "$('/' in $0 ? $0 : $0/$src)",
-          "default": "${src}"
-        }
-      }
+      "description": "Run the project",
+      "command": "odin run ${src} ${flags}"
     },
     "check": {
-      "command": "odin check ${dir}",
-      "args": {
-        "dir": {
-          "value": "$('/' in $0 ? $0 : $0/$src)",
-          "default": "${src}"
-        }
-      }
+      "description": "Check for errors",
+      "command": "odin check ${src} ${flags}"
     }
   },
   "build": {
