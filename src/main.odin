@@ -53,13 +53,7 @@ main :: proc() {
 
 		util.fprint(
 			gitignore,
-			{"# Build output",
-			".build/",
-			"",
-			"# OS files",
-			".DS_Store",
-			"Thumbs.db",
-			""},
+			{"# Build output", ".build/", "", "# OS files", ".DS_Store", "Thumbs.db", ""},
 		)
 
 		cfg := config.default_config()
@@ -78,7 +72,18 @@ main :: proc() {
 		fmt.println("\tobt run    - Runs the project")
 	}
 	if cli.opt.action == "info" {
+		config_path := util.concat(cwd, "/obt.json")
+		cfg, default := config.load(config_path, cli.opt.verbose)
+
+		if default {
+			fmt.println("Couldn't find obt.json! Are you sure you're in a project?")
+			os.exit(1)
+		}
 		// TODO: show project info (name, actions, build flags...)
+		fmt.println("Project Information:")
+		fmt.printfln("Name: %v", cfg.name)
+		fmt.printfln("Source directory: %v", cfg.build.src)
+		fmt.printfln("Build directory: %v", cfg.build.out)
 	} else {
 		// parse custom action
 		config_path := util.concat(cwd, "/obt.json")
