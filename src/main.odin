@@ -78,11 +78,29 @@ main :: proc() {
 			fmt.println("Couldn't find obt.json! Are you sure you're in a project?")
 			os.exit(1)
 		}
-		// TODO: show project info (name, actions, build flags...)
-		fmt.println("Project Information:")
-		fmt.printfln("Name: %v", cfg.name)
-		fmt.printfln("Source directory: %v", cfg.build.src)
-		fmt.printfln("Build directory: %v", cfg.build.out)
+
+		fmt.printfln("Project name:\n\t%v", cfg.name)
+		fmt.printfln("Source directory:\n\t%v", cfg.build.src)
+		fmt.printfln("Build directory:\n\t%v", cfg.build.out)
+		fmt.println("Actions:")
+		for name, action in cfg.actions {
+			fmt.printfln("\t%v: %v", name, action.description)
+			fmt.printfln("\t\t%v", action.command)
+		}
+		fmt.println("Build flags:")
+		if len(cfg.build.flags) != 0 {
+			fmt.printfln("\t%v", cfg.build.flags)
+		} else {
+			fmt.println("\tNone")
+		}
+		fmt.println("Collections:")
+		if len(cfg.build.collections) != 0 {
+			for collection in cfg.build.collections {
+				fmt.printfln("\t%v:\n\t%v", collection.name, collection.path)
+			}
+		} else {
+			fmt.println("\tNone")
+		}
 	} else {
 		// parse custom action
 		config_path := util.concat(cwd, "/obt.json")
