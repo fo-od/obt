@@ -18,7 +18,31 @@ project
 ## Default Configuration
 This will be used when obt.json cannot be found.
 ```json
-// TODO: put default config here
+{
+	"$schema": "https://raw.githubusercontent.com/fo-od/obt/refs/heads/main/schema/obt.schema.json",
+	"name": "myproject",
+	"actions": {
+		"build": {
+			"command": "odin build ${src} -out:${out}/${name} ${flags}",
+			"description": "Build the project"
+		},
+		"run": {
+			"command": "odin run ${src} ${flags}",
+			"description": "Run the project"
+		},
+		"check": {
+			"command": "odin check ${src}",
+			"description": "Check the project"
+		}
+	},
+	"build": {
+		"src": "src",
+		"out": "build",
+		"flags": [],
+		"collections": [],
+		"useOlsCollections": false
+	}
+}
 ```
 
 ---

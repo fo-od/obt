@@ -38,10 +38,10 @@ default_config :: proc() -> (cfg: Config) {
 		name = "myproject",
 		build = {
 			src = "src",
-			out = ".build",
+			out = "build",
 			flags = {},
 			collections = {},
-			use_ols_collections = false,
+			use_ols_collections = true,
 		},
 	}
 
