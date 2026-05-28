@@ -161,7 +161,7 @@ expand_placeholders :: proc(
 	for collection in config.build.collections {
 		strings.write_string(
 			&flags_sb,
-			fmt.tprintf("-collection:%s=%s", collection.name, collection.path),
+			fmt.tprintf("-collection:%s=%s ", collection.name, collection.path),
 		)
 	}
 	flags = strings.to_string(flags_sb)
