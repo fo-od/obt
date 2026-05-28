@@ -71,8 +71,7 @@ main :: proc() {
 		fmt.println("\tobt build  - Build the project")
 		fmt.println("\tobt run    - Runs the project")
 	} else if cli.opt.action == "info" {
-		config_path := util.concat(cwd, "/obt.json")
-		cfg, default := config.load(config_path, cli.opt.verbose)
+		cfg, default := config.load(cwd, cli.opt.verbose)
 
 		if default {
 			fmt.println("Couldn't find obt.json! Are you sure you're in a project?")
@@ -96,15 +95,14 @@ main :: proc() {
 		fmt.println("Collections:")
 		if len(cfg.build.collections) != 0 {
 			for collection in cfg.build.collections {
-				fmt.printfln("\t%v:\n\t%v", collection.name, collection.path)
+				fmt.printfln("\t'%v': %v", collection.name, collection.path)
 			}
 		} else {
 			fmt.println("\tNone")
 		}
 	} else {
 		// parse custom action
-		config_path := util.concat(cwd, "/obt.json")
-		cfg, default := config.load(config_path, cli.opt.verbose)
+		cfg, default := config.load(cwd, cli.opt.verbose)
 
 		cli.opt.default_cfg = default
 

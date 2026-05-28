@@ -1,5 +1,6 @@
 package config
 
+import "../util"
 import "core:encoding/json"
 import "core:fmt"
 import "core:os"
@@ -16,7 +17,7 @@ Build_Config :: struct {
 	src:                 string `json:"src"`,
 	out:                 string `json:"out"`,
 	flags:               []string `json:"flags"`,
-	collections:         []Collection `json:"collections"`,
+	collections:         [dynamic]Collection `json:"collections"`,
 	use_ols_collections: bool `json:"useOlsCollections"`,
 }
 
@@ -30,6 +31,10 @@ Config :: struct {
 	name:    string `json:"name"`,
 	actions: map[string]Action `json:"actions"`,
 	build:   Build_Config `json:"build"`,
+}
+
+Ols_Config :: struct {
+	collections: []Collection `json:"collections"`,
 }
 
 default_config :: proc() -> (cfg: Config) {
@@ -65,7 +70,7 @@ default_config :: proc() -> (cfg: Config) {
 load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
 	cfg = default_config()
 
-	data, read_err := os.read_entire_file(path, context.allocator)
+	data, read_err := os.read_entire_file(util.concat(path, "/obt.json"), context.allocator)
 	if read_err != nil {
 		if verbose do fmt.eprintln("Failed to read config file at", path, ":", read_err, "\nFalling back to default config.")
 		default = true
@@ -77,6 +82,29 @@ load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
 		if verbose do fmt.eprintln("Failed to parse config json", path, ":", unmarshal_err, "\nFalling back to default config.")
 		default = true
 		return
+	}
+
+	if cfg.build.use_ols_collections {
+		ols_data, read_err := os.read_entire_file(
+			util.concat(path, "/ols.json"),
+			context.allocator,
+		)
+		if read_err != nil {
+			fmt.eprintln("Failed to read ols.json at", util.concat(path, "/ols.json"))
+			return
+		}
+
+		ols_cfg: Ols_Config
+		unmarshal_err := json.unmarshal(ols_data, &ols_cfg)
+		if unmarshal_err != nil {
+			if verbose do fmt.eprintln("Failed to parse ols.json", path, ":", unmarshal_err)
+			return
+		}
+
+		for collection in ols_cfg.collections {
+			append(&cfg.build.collections, collection)
+			if verbose do fmt.printfln("Adding %v to collections", collection)
+		}
 	}
 
 	return
