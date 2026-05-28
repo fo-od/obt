@@ -29,8 +29,8 @@
             "command": "odin build ${src} -out:${out}/${name} ${flags}"
           },
           "run": {
-            "description": "Run the project",
-            "command": "odin run ${src} ${flags}"
+            "command": "odin run ${src} -out:${out}/${name}-temp ${flags}",
+            "description": "Run the project"
           },
           "check": {
             "description": "Check for errors",

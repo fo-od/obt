@@ -27,7 +27,7 @@ This will be used when obt.json cannot be found.
 			"description": "Build the project"
 		},
 		"run": {
-			"command": "odin run ${src} ${flags}",
+			"command": "odin run ${src} -out:${out}/${name}-temp ${flags}",
 			"description": "Run the project"
 		},
 		"check": {

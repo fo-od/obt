@@ -56,7 +56,7 @@ default_config :: proc() -> (cfg: Config) {
 		description = "Build the project",
 	}
 	cfg.actions["run"] = Action {
-		command     = "odin run ${src} ${flags}",
+		command     = "odin run ${src} -out:${out}/${name}-temp ${flags}",
 		description = "Run the project",
 	}
 	cfg.actions["check"] = Action {
