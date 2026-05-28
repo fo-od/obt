@@ -73,7 +73,7 @@ load :: proc(path: string, verbose, use_ols: bool) -> (cfg: Config, default: boo
 	if verbose do fmt.println("Reading config file at:", path)
 	data, read_err := os.read_entire_file(util.concat(path, "/obt.json"), context.allocator)
 	if read_err != nil {
-		if verbose do fmt.eprintln("Failed to read config file at", path, ":", read_err, "\nFalling back to default config.")
+		if verbose do fmt.eprintln("Failed to read config file at", util.concat(path, "/obt.json"), ":", read_err, "\nFalling back to default config.")
 		default = true
 		return
 	}
@@ -81,7 +81,7 @@ load :: proc(path: string, verbose, use_ols: bool) -> (cfg: Config, default: boo
 	if verbose do fmt.println("Parsing config...")
 	unmarshal_err := json.unmarshal(data, &cfg)
 	if unmarshal_err != nil {
-		if verbose do fmt.eprintln("Failed to parse config json", path, ":", unmarshal_err, "\nFalling back to default config.")
+		if verbose do fmt.eprintln("Failed to parse config json", util.concat(path, "/obt.json"), ":", unmarshal_err, "\nFalling back to default config.")
 		default = true
 		return
 	}
