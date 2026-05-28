@@ -22,7 +22,21 @@
           }
         },
         "required": ["command"],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "default": {
+          "build": {
+            "description": "Build the project",
+            "command": "odin build ${src} -out:${out}/${name} ${flags}"
+          },
+          "run": {
+            "description": "Run the project",
+            "command": "odin run ${src} ${flags}"
+          },
+          "check": {
+            "description": "Check for errors",
+            "command": "odin check ${src} ${flags}"
+          }
+        }
       }
     },
 
