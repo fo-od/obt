@@ -40,7 +40,7 @@ This will be used when obt.json cannot be found.
 		"out": "build",
 		"flags": [],
 		"collections": [],
-		"useOlsCollections": false
+		"useOlsCollections": true
 	}
 }
 ```

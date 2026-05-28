@@ -46,7 +46,7 @@ default_config :: proc() -> (cfg: Config) {
 			out = "build",
 			flags = {},
 			collections = {},
-			use_ols_collections = true,
+			use_ols_collections = false,
 		},
 	}
 
@@ -67,9 +67,10 @@ default_config :: proc() -> (cfg: Config) {
 	return
 }
 
-load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
+load :: proc(path: string, verbose, use_ols: bool) -> (cfg: Config, default: bool) {
 	cfg = default_config()
 
+	if verbose do fmt.println("Reading config file at:", path)
 	data, read_err := os.read_entire_file(util.concat(path, "/obt.json"), context.allocator)
 	if read_err != nil {
 		if verbose do fmt.eprintln("Failed to read config file at", path, ":", read_err, "\nFalling back to default config.")
@@ -77,6 +78,7 @@ load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
 		return
 	}
 
+	if verbose do fmt.println("Parsing config...")
 	unmarshal_err := json.unmarshal(data, &cfg)
 	if unmarshal_err != nil {
 		if verbose do fmt.eprintln("Failed to parse config json", path, ":", unmarshal_err, "\nFalling back to default config.")
@@ -84,7 +86,8 @@ load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
 		return
 	}
 
-	if cfg.build.use_ols_collections {
+	if cfg.build.use_ols_collections || use_ols {
+		if verbose do fmt.println("Reading ols config file at:", util.concat(path, "/ols.json"))
 		ols_data, read_err := os.read_entire_file(
 			util.concat(path, "/ols.json"),
 			context.allocator,
@@ -95,6 +98,7 @@ load :: proc(path: string, verbose: bool) -> (cfg: Config, default: bool) {
 		}
 
 		ols_cfg: Ols_Config
+		if verbose do fmt.println("Parsing config...")
 		unmarshal_err := json.unmarshal(ols_data, &ols_cfg)
 		if unmarshal_err != nil {
 			if verbose do fmt.eprintln("Failed to parse ols.json", path, ":", unmarshal_err)

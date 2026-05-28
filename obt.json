@@ -17,6 +17,6 @@
   },
   "build": {
     "src": "src",
-    "out": "build"
+    "out": ".build"
   }
 }

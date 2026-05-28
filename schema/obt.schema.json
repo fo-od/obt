@@ -18,7 +18,7 @@
           "command": { "type": "string", "description": "Command to execute" },
           "description": {
             "type": "string",
-            "description": "Description of the action"
+            "description": "Description of the action, used for display in 'obt info'"
           }
         },
         "required": ["command"],

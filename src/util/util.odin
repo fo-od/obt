@@ -32,32 +32,17 @@ exec :: proc {
 	exec_string,
 }
 
-exec_args :: proc(args: []string, stdout := true) -> (exit_code: int, out: Maybe(string)) {
-	if stdout {
-		process, _ := os.process_start(
-			{command = args, stdin = os.stdin, stdout = os.stdout, stderr = os.stderr},
-		)
-		state, _ := os.process_wait(process)
+exec_args :: proc(args: []string) -> (exit_code: int) {
+	process, _ := os.process_start(
+		{command = args, stdin = os.stdin, stdout = os.stdout, stderr = os.stderr},
+	)
+	state, _ := os.process_wait(process)
 
-		return state.exit_code, nil
-	} else {
-		out_r, out_w, _ := os.pipe()
-
-		process, _ := os.process_start(
-			{command = args, stdin = os.stdin, stdout = out_w, stderr = os.stderr},
-		)
-		state, _ := os.process_wait(process)
-		os.close(out_w)
-
-		out, _ := os.read_entire_file(out_r, context.allocator)
-		os.close(out_r)
-
-		return state.exit_code, strings.clone_from_bytes(out)
-	}
+	return state.exit_code
 }
 
-exec_string :: proc(cmd: string, stdout := true) -> (exit_code: int, out: Maybe(string)) {
-	return exec_args(strings.split(cmd, " "), stdout)
+exec_string :: proc(cmd: string) -> (exit_code: int) {
+	return exec_args(strings.split(cmd, " "))
 }
 
 /*

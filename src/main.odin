@@ -44,7 +44,7 @@ main :: proc() {
 				"import \"core:fmt\"",
 				"",
 				"main :: proc() {",
-				"	fmt.println(\"Hellope world!\")",
+				"	fmt.println(\"Hellope!\")",
 				"}",
 			},
 		)
@@ -53,7 +53,7 @@ main :: proc() {
 
 		util.fprint(
 			gitignore,
-			{"# Build output", ".build/", "", "# OS files", ".DS_Store", "Thumbs.db", ""},
+			{"# Build output", "build/", "", "# OS files", ".DS_Store", "Thumbs.db", ""},
 		)
 
 		cfg := config.default_config()
@@ -71,7 +71,7 @@ main :: proc() {
 		fmt.println("\tobt build  - Build the project")
 		fmt.println("\tobt run    - Runs the project")
 	} else if cli.opt.action == "info" {
-		cfg, default := config.load(cwd, cli.opt.verbose)
+		cfg, default := config.load(cwd, cli.opt.verbose, cli.opt.use_ols)
 
 		if default {
 			fmt.println("Couldn't find obt.json! Are you sure you're in a project?")
@@ -102,7 +102,7 @@ main :: proc() {
 		}
 	} else {
 		// parse custom action
-		cfg, default := config.load(cwd, cli.opt.verbose)
+		cfg, default := config.load(cwd, cli.opt.verbose, cli.opt.use_ols)
 
 		cli.opt.default_cfg = default
 
@@ -111,10 +111,6 @@ main :: proc() {
 		if action.command == "" {
 			fmt.eprintfln("Unknown action '%s'", cli.opt.action)
 			os.exit(1)
-		}
-
-		if cli.opt.use_ols {
-			// TODO: read ols collections and add to config
 		}
 
 		cmd_expanded := config.expand_placeholders(
@@ -126,7 +122,7 @@ main :: proc() {
 		if cli.opt.verbose do fmt.printfln("Expanding '%s' to '%s'", action.command, cmd_expanded)
 
 		if cli.opt.verbose do fmt.printfln("Running '%s'", cmd_expanded)
-		util.exec(cmd_expanded)
+		os.exit(util.exec(cmd_expanded))
 	}
 }
 
