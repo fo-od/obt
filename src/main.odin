@@ -70,8 +70,7 @@ main :: proc() {
 		fmt.println("Next steps:")
 		fmt.println("\tobt build  - Build the project")
 		fmt.println("\tobt run    - Runs the project")
-	}
-	if cli.opt.action == "info" {
+	} else if cli.opt.action == "info" {
 		config_path := util.concat(cwd, "/obt.json")
 		cfg, default := config.load(config_path, cli.opt.verbose)
 
