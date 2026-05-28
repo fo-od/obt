@@ -75,15 +75,15 @@ load :: proc(path: string, verbose, use_ols: bool) -> (cfg: Config, default: boo
 	if read_err != nil {
 		if verbose do fmt.eprintln("Failed to read config file at", util.concat(path, "/obt.json"), ":", read_err, "\nFalling back to default config.")
 		default = true
-		return
 	}
 
-	if verbose do fmt.println("Parsing config...")
-	unmarshal_err := json.unmarshal(data, &cfg)
-	if unmarshal_err != nil {
-		if verbose do fmt.eprintln("Failed to parse config json", util.concat(path, "/obt.json"), ":", unmarshal_err, "\nFalling back to default config.")
-		default = true
-		return
+	if !default {
+		if verbose do fmt.println("Parsing config...")
+		unmarshal_err := json.unmarshal(data, &cfg)
+		if unmarshal_err != nil {
+			if verbose do fmt.eprintln("Failed to parse config json", util.concat(path, "/obt.json"), ":", unmarshal_err, "\nFalling back to default config.")
+			default = true
+		}
 	}
 
 	if cfg.build.use_ols_collections || use_ols {
@@ -164,6 +164,7 @@ expand_placeholders :: proc(
 			fmt.tprintf("-collection:%s=%s", collection.name, collection.path),
 		)
 	}
+	flags = strings.to_string(flags_sb)
 
 	n: uint = 0
 
