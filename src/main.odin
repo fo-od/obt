@@ -100,6 +100,9 @@ main :: proc() {
 		} else {
 			fmt.println("\tNone")
 		}
+	} else if strings.trim_space(cli.opt.action) == "" {
+		cli.print_help()
+		os.exit(1)
 	} else {
 		// parse custom action
 		cfg, default := config.load(cwd, cli.opt.verbose, cli.opt.use_ols)
