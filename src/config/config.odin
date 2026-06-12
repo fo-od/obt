@@ -60,7 +60,7 @@ default_config :: proc() -> (cfg: Config) {
 		description = "Run the project",
 	}
 	cfg.actions["check"] = Action {
-		command     = "odin check ${src}",
+		command     = "odin check ${src} ${flags}",
 		description = "Check the project",
 	}
 
