@@ -20,6 +20,10 @@ main :: proc() {
 	cwd, _ := os.get_working_directory(context.allocator)
 
 	if cli.opt.action == "init" {
+		if len(os.args) < 3 {
+			fmt.println("Missing project name!\nCorrect usage: obt init <name>")
+			os.exit(1)
+		}
 		// initialize a project
 		name := os.args[2]
 
