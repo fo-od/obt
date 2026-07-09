@@ -86,6 +86,10 @@ load :: proc(path: string, verbose, use_ols: bool) -> (cfg: Config, default: boo
 		}
 	}
 
+	// make sure build dir exists
+	if verbose do fmt.println("Making sure build directory exists at \"", util.concat(path, cfg.build.out), "\".")
+	os.mkdir(util.concat(path, cfg.build.out))
+
 	if cfg.build.use_ols_collections || use_ols {
 		if verbose do fmt.println("Reading ols config file at:", util.concat(path, "/ols.json"))
 		ols_data, read_err := os.read_entire_file(
