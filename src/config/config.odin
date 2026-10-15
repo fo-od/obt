@@ -39,7 +39,7 @@ Ols_Config :: struct {
 
 default_config :: proc() -> (cfg: Config) {
 	cfg = {
-		schema = "https://raw.githubusercontent.com/fo-od/obt/refs/heads/main/schema/obt.schema.json",
+		schema = "https://codeberg.org/fo-od/obt/raw/branch/main/schema/obt.schema.json",
 		name = "myproject",
 		build = {
 			src = "src",
